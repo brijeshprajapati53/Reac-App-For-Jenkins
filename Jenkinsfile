@@ -12,7 +12,7 @@ pipeline {
 
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/brijeshprajapati53/React-App-For-Jenkins.git'
+                git branch: 'main', url: 'https://github.com/brijeshprajapati53/Reac-App-For-Jenkins.git'
             }
         }
 
