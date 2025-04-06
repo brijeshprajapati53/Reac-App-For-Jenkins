@@ -107,12 +107,13 @@ output "app_service_default_hostname" {
         }
 
         stage('Zip Build Folder') {
-            steps {
-                dir('my-app') {
-                    bat 'powershell Compress-Archive -Path build\\* -DestinationPath ..\\build.zip -Force'
-                }
-            }
+    steps {
+        dir('my-app/build') {
+            bat 'powershell Compress-Archive -Path * -DestinationPath ..\\..\\build.zip -Force'
         }
+    }
+}
+
 
         stage('Deploy to Azure') {
             steps {
