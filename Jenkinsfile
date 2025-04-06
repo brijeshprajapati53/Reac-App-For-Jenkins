@@ -34,12 +34,6 @@ pipeline {
             }
         }
 
-        stage('Install Node.js') {
-            steps {
-                bat 'node -v'
-                bat 'npm -v'
-            }
-        }
 
         stage('Install Dependencies') {
             steps {
