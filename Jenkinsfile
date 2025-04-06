@@ -5,7 +5,7 @@ pipeline {
         AZURE_CREDENTIALS_ID = 'azure-service-principal'
         RESOURCE_GROUP = 'rg-jenkins-1'
         APP_SERVICE_NAME = 'reactAppIntegratedBrijesh01'
-        LOCATION = 'East US'  // Adjust this to your Azure region
+        LOCATION = 'East US'
     }
 
     stages {
@@ -24,8 +24,8 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.resource_group}"
-  location = "${var.location}"
+  name     = var.resource_group
+  location = var.location
 }
 
 resource "azurerm_app_service_plan" "asp" {
@@ -45,7 +45,6 @@ resource "azurerm_app_service" "app" {
   app_service_plan_id = azurerm_app_service_plan.asp.id
 }
 '''
-
                 writeFile file: 'variables.tf', text: '''
 variable "resource_group" {
   type = string
@@ -60,7 +59,6 @@ variable "app_service_name" {
   type = string
 }
 '''
-
                 writeFile file: 'outputs.tf', text: '''
 output "app_service_default_hostname" {
   value = azurerm_app_service.app.default_site_hostname
@@ -71,19 +69,19 @@ output "app_service_default_hostname" {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                bat 'terraform init'
             }
         }
 
         stage('Terraform Plan') {
             steps {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    sh '''
-                    export ARM_CLIENT_ID=$AZURE_CLIENT_ID
-                    export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
-                    export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
-                    export ARM_TENANT_ID=$AZURE_TENANT_ID
-                    terraform plan -var="resource_group=$RESOURCE_GROUP" -var="app_service_name=$APP_SERVICE_NAME"
+                    bat '''
+                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
+                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
+                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
+                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
+                    terraform plan -var "resource_group=%RESOURCE_GROUP%" -var "app_service_name=%APP_SERVICE_NAME%"
                     '''
                 }
             }
@@ -92,12 +90,12 @@ output "app_service_default_hostname" {
         stage('Terraform Apply') {
             steps {
                 withCredentials([azureServicePrincipal(credentialsId: AZURE_CREDENTIALS_ID)]) {
-                    sh '''
-                    export ARM_CLIENT_ID=$AZURE_CLIENT_ID
-                    export ARM_CLIENT_SECRET=$AZURE_CLIENT_SECRET
-                    export ARM_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
-                    export ARM_TENANT_ID=$AZURE_TENANT_ID
-                    terraform apply -auto-approve -var="resource_group=$RESOURCE_GROUP" -var="app_service_name=$APP_SERVICE_NAME"
+                    bat '''
+                    set ARM_CLIENT_ID=%AZURE_CLIENT_ID%
+                    set ARM_CLIENT_SECRET=%AZURE_CLIENT_SECRET%
+                    set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
+                    set ARM_TENANT_ID=%AZURE_TENANT_ID%
+                    terraform apply -auto-approve -var "resource_group=%RESOURCE_GROUP%" -var "app_service_name=%APP_SERVICE_NAME%"
                     '''
                 }
             }
@@ -148,10 +146,10 @@ output "app_service_default_hostname" {
 
     post {
         success {
-            echo 'Terraform Infra + React App Deployed Successfully to Azure!'
+            echo '✅ Terraform Infra + React App Deployed Successfully to Azure!'
         }
         failure {
-            echo 'Pipeline Failed. Check Terraform and Deployment logs.'
+            echo '❌ Pipeline Failed. Check logs for details.'
         }
     }
 }
