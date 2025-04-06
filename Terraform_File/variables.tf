@@ -1,11 +1,12 @@
-variable "location" {
-  description = "The Azure region where resources will be created"
-  type        = string
-  default     = "East US"
+variable "resource_group" {
+  type = string
 }
 
-variable "app_service_plan_sku" {
-  description = "The pricing SKU for the Service Plan"
-  type        = string
-  default     = "B1"  # Adjust based on your needs (e.g., B1, S1, P1v2)
+variable "location" {
+  type    = string
+  default = "East US"
+}
+
+variable "app_service_name" {
+  type = string
 }

@@ -1,34 +1,25 @@
 provider "azurerm" {
   features {}
-  subscription_id = "c1ff822a-8d32-49f1-b97a-89c2b2a1b55e"
 }
 
-resource "azurerm_resource_group" "this" {
-  name     = "rg-jenkins"
+resource "azurerm_resource_group" "rg" {
+  name     = var.resource_group
   location = var.location
 }
 
-resource "azurerm_service_plan" "this" {
-  name                = "appserviceplanBrijesh11"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  os_type             = "Linux"
-
-  sku_name = "B1"
-
+resource "azurerm_app_service_plan" "asp" {
+  name                = "appserviceplan-${var.app_service_name}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  sku {
+    tier = "Free"
+    size = "F1"
+  }
 }
 
-resource "azurerm_linux_web_app" "this" {
-  name                = "webapijenkinsBrijesh111"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  service_plan_id     = azurerm_service_plan.this.id  # Updated attribute
-
-  site_config {
-    always_on = true
-    
-    application_stack {
-      dotnet_version = "8.0"
-}
-}
+resource "azurerm_app_service" "app" {
+  name                = var.app_service_name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  app_service_plan_id = azurerm_app_service_plan.asp.id
 }
