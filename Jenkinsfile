@@ -26,8 +26,8 @@ pipeline {
                         set ARM_SUBSCRIPTION_ID=%AZURE_SUBSCRIPTION_ID%
                         set ARM_TENANT_ID=%AZURE_TENANT_ID%
                         terraform init
-                        terraform plan -var "resource_group=%RESOURCE_GROUP%" -var "app_service_name=%APP_SERVICE_NAME%" -out=tfplan
-                        terraform apply -auto-approve tfplan
+                        terraform plan -var "resource_group=%RESOURCE_GROUP%" -var "app_service_name=%APP_SERVICE_NAME%"
+                        terraform apply -auto-approve
                         '''
                     }
                 }
